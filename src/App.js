@@ -1,22 +1,43 @@
-import React, { Component } from "react";
-import "./App.css";
-import Movie from "./Components/Movie";
-
-const movieTitles = ["아이언맨", "베놈", "스파이더맨"];
-
-const movieImages = [
-  "http://file.mk.co.kr/meet/neds/2013/10/image_readtop_2013_968172_13814880001070564.jpg",
-  "http://img.cgv.co.kr/Movie/Thumbnail/Poster/000080/80589/80589_1000.jpg",
-  "https://t1.daumcdn.net/cfile/tistory/223B2F4D595F1CEB09"
-];
+import React, { Component } from 'react';
+import './App.css';
+import Movie from './Components/Movie';
 
 class App extends Component {
+  state = {
+    Movies: '',
+  };
+
+  componentDidMount() {
+    this.getMoives();
+  }
+
+  renderMovies = Movies => Movies.map(movie => (
+    <Movie
+      title={movie.title_english}
+      imageSrc={movie.large_cover_image}
+      key={movie.id}
+      genres={movie.genres ? movie.genres : ['']}
+      synopsis={movie.synopsis}
+    />
+  ));
+
+  getMoives = async () => {
+    const movies = await this.callApi();
+    this.setState({
+      Movies: movies,
+    });
+  };
+
+  callApi = () => fetch('https://yts.am/api/v2/list_movies.json?sort_by=download_count')
+    .then(response => response.json())
+    .then(json => json.data.movies)
+    .catch(e => console.log(e));
+
   render() {
+    const { Movies } = this.state;
     return (
-      <div className="App">
-        <Movie title={movieTitles[0]} imageSrc={movieImages[0]} />
-        <Movie title={movieTitles[1]} imageSrc={movieImages[1]} />
-        <Movie title={movieTitles[2]} imageSrc={movieImages[2]} />
+      <div className={Movies ? 'App' : 'App--loading'}>
+        {Movies ? this.renderMovies(Movies) : 'Loading'}
       </div>
     );
   }

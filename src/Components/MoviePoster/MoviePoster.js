@@ -1,11 +1,16 @@
-import React, { Component } from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import './MoviePoster.css';
 
-export default class MoviePoster extends Component {
-  render() {
-    return (
-      <div>
-        <img src={this.props.imageSrc} />
-      </div>
-    );
-  }
-}
+const MoviePoster = ({ imageSrc, alt }) => (
+  <div>
+    <img src={imageSrc} alt={alt} title={alt} className="Movie__Poster" />
+  </div>
+);
+
+MoviePoster.propTypes = {
+  imageSrc: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+};
+
+export default MoviePoster;
